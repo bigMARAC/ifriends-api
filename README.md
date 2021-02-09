@@ -29,4 +29,4 @@ Não esqueça de criar um arquivo `db.js` em `src/config/` seguindo o exemplo de
 - [x] Cadastro de Matérias
 - [x] Vincular Matérias aos Alunos
 - [x] Listar todos os alunos
-- [x] Criar e Autenticar auth_token
+- [ ] Criar e Autenticar auth_token
