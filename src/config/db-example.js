@@ -1,9 +1,9 @@
 module.exports = {
-    dialect: '', /* 'mysql' | 'mariadb' | 'postgres' | 'mssql' */
+    dialect: 'mysql',
     host: '', /* HOST */
     username: '', /* USER */ 
     password: '', /* PASSWORD */
-    database: '', /* NAME OF DATABASE */
+    database: 'ifriends',
     define: {
         timestamps: false
     }
