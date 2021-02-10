@@ -1,7 +1,7 @@
 # API IFriends 2.0
 ![Badge](https://img.shields.io/badge/MaracTech-IFriends-blueviolet)
 ![Badge](https://img.shields.io/badge/license-MIT-brightgreen)
-![Badge](https://img.shields.io/github/followers/bigMARAC?label=follow&style=social)
+<!-- ![Badge](https://img.shields.io/github/followers/bigMARAC?label=follow&style=social) -->
 
 ## Instalação
 
