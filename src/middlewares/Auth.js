@@ -1,0 +1,27 @@
+const jwt = require('jsonwebtoken')
+const Aluno = require('./../models/Aluno')
+
+module.exports = {
+    async check(req, res, next) {
+        if (req.headers.authorization) {
+            const [, token] = req.headers.authorization.split(' ')
+
+            try {
+                const user = jwt.verify(token, 'got a secret?')
+
+
+                const aluno = await Aluno.findByPk(user.user)
+
+                if (aluno) {
+                    next()
+                } else {
+                    res.status(401)
+                }
+            } catch (error) {
+                res.status(401).json({ Erro: error })
+            }
+        } else {
+            res.status(401).json({ Erro: 'Usuário não autenticado' })
+        }
+    }
+}

@@ -1,6 +1,7 @@
 const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
 
 module.exports = {
     async index(req, res) {
@@ -30,7 +31,14 @@ module.exports = {
 
                         await aluno.addMateria(materia)
                     }
-                    return res.status(200).json({ id: aluno.id, nome, matricula })
+                    
+                    const token = jwt.sign(
+                        {user: aluno.id},
+                        'got a secret?',
+                        { expiresIn: 86400 } // 24 horas
+                    )
+
+                    return res.status(200).json({ aluno, token })
 
                 } else {
                     return res.status(400).json({ Erro: err })
@@ -48,12 +56,25 @@ module.exports = {
                 matricula
             }
         })
-        bcrypt.compare(senha, aluno.senha, function (err, result) {
-            if (result) {
-                return res.status(200).json({ auth: 'Usuário autenticado', nome: aluno.nome })
-            }
-            return res.status(400).json({ auth: 'Usuário não autenticado' })
-        });
+
+        if(aluno){
+            const token = jwt.sign(
+                {user: aluno.id},
+                'got a secret?',
+                { expiresIn: 86400 } // 24 horas
+            )
+
+            bcrypt.compare(senha, aluno.senha, function (err, result) {
+                if (result) {
+                    return res.status(200).json({ auth: true, nome: aluno.nome, token })
+                }
+                return res.status(401).json({ auth: 'Senha incorreta' })
+            });
+        } else {
+            return res.status(400).json('Usuário não encontrado')
+        }
+
+        
     },
 
     async add(req, res) {
