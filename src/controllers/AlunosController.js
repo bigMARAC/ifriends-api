@@ -17,6 +17,10 @@ module.exports = {
         return res.status(200).json({ alunos })
     },
 
+    me(req, res) {
+        res.status(200).json({ aluno: req.auth })
+    },
+
     async store(req, res) {
         const { nome, matricula, senha, ids } = req.body
         if (nome && matricula && senha) {

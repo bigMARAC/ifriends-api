@@ -10,6 +10,7 @@ routes.post('/login', AlunosController.auth) // autenticar aluno
 routes.post('/alunos', AlunosController.store) // criar aluno
 
 // alunos - rotas autenticadas
+routes.get('/me', Auth.check, AlunosController.me)
 routes.get('/alunos', Auth.check, AlunosController.index) // listar alunos
 routes.delete('/alunos/:id', Auth.check, AlunosController.destroy) // apagar aluno
 routes.post('/alunos/materias', Auth.check, AlunosController.add) // vincular uma matéria a um aluno

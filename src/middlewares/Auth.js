@@ -8,9 +8,9 @@ module.exports = {
 
             try {
                 const user = jwt.verify(token, 'got a secret?')
-
-
                 const aluno = await Aluno.findByPk(user.user)
+
+                req.auth = aluno
 
                 if (aluno) {
                     next()
