@@ -27,11 +27,10 @@ Não esqueça de criar um arquivo `db.js` em `src/config/` seguindo o exemplo de
 
 ### Features
 
-- [x] Cadastro de Aluno
-- [x] Cadastro de Matérias
+- [x] CRUD de Alunos
+- [x] CRUD de Matérias
 - [x] Vincular Matérias aos Alunos
-- [x] Listar todos os alunos
-- [x] Criar e Autenticar auth_token
+- [x] JSON Web Token
 - [ ] Chat
 
 ## Autor
