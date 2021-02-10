@@ -1,6 +1,7 @@
 const express = require('express')
 const AlunosController = require('./controllers/AlunosController')
 const MateriasController = require('./controllers/MateriasController')
+const LikesController = require('./controllers/LikesController')
 const Auth = require('./middlewares/Auth')
 
 const routes = express.Router()
@@ -21,5 +22,8 @@ routes.post('/materias', Auth.check, MateriasController.store) // criar materia
 routes.get('/materias', Auth.check, MateriasController.index) // listar materias
 routes.put('/materias', Auth.check, MateriasController.update) // atualizar materias
 routes.delete('/materias/:id', Auth.check, MateriasController.destroy) // apagar materias
+
+// match
+routes.post('/match/:origem_id', LikesController.store)
 
 module.exports = routes

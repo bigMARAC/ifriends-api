@@ -26,7 +26,7 @@ module.exports = {
         const { id, nome, matricula } = req.body
         const aluno = await Aluno.findByPk(id)
 
-        if(aluno){
+        if (aluno) {
             aluno.nome = nome
             aluno.matricula = matricula
 
@@ -53,9 +53,9 @@ module.exports = {
 
                         await aluno.addMateria(materia)
                     }
-                    
+
                     const token = jwt.sign(
-                        {user: aluno.id},
+                        { user: aluno.id },
                         secret,
                         { expiresIn: 86400 } // 24 horas
                     )
@@ -79,9 +79,9 @@ module.exports = {
             }
         })
 
-        if(aluno){
+        if (aluno) {
             const token = jwt.sign(
-                {user: aluno.id},
+                { user: aluno.id },
                 secret,
                 { expiresIn: 86400 } // 24 horas
             )
@@ -96,7 +96,7 @@ module.exports = {
             return res.status(400).json('Usuário não encontrado')
         }
 
-        
+
     },
 
     async add(req, res) {
