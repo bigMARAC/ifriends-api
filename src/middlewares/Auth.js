@@ -9,7 +9,9 @@ module.exports = {
 
             try {
                 const user = jwt.verify(token, secret)
-                const aluno = await Aluno.findByPk(user.user)
+                const aluno = await Aluno.findByPk(user.user, {
+                    include: { association: 'materias' }
+                })
 
                 req.auth = aluno
 

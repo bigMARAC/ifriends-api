@@ -2,7 +2,7 @@ const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
-const { secret } = require('./../config/token')
+const { secret } = require('./../config/token');
 
 module.exports = {
     async index(req, res) {
@@ -23,16 +23,17 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { id, nome, matricula } = req.body
+        const { id } = req.params
+        const { nome, matricula } = req.body
         const aluno = await Aluno.findByPk(id)
 
         if (aluno) {
-            aluno.nome = nome
-            aluno.matricula = matricula
+            if (nome) aluno.nome = nome
+            if (matricula) aluno.matricula = matricula
 
-            const novoAluno = await aluno.save()
+            await aluno.save()
 
-            res.status(200).json({ Aluno: novoAluno })
+            res.status(200).json('Aluno atualizado com sucesso')
 
         } else {
             res.status(400).json({ Erro: 'Usuário não encontrado' })
@@ -100,9 +101,9 @@ module.exports = {
     },
 
     async add(req, res) {
-        const { aluno_id, ids } = req.body
+        const { aluno_id } = req.params
+        const { ids } = req.body
         const aluno = await Aluno.findByPk(aluno_id)
-        console.log(ids, aluno)
 
         if (aluno) {
             for (const id of ids) {
@@ -114,7 +115,7 @@ module.exports = {
 
                 await aluno.addMateria(materia)
             }
-            return res.json(aluno)
+            return res.json('Materia(s) adicionada(s) com sucesso')
         }
         return res.status(400).json({ Erro: "Campos inválidos" })
     },
@@ -126,6 +127,31 @@ module.exports = {
             await aluno.destroy()
             return res.json('Usuário deletado com sucesso')
         }
+        return res.status(400).json({ Erro: 'Usuário não encontrado' })
+    },
+
+    async delete(req, res){
+        const { aluno_id } = req.params
+        const { ids } = req.body
+
+        const aluno = await Aluno.findByPk(aluno_id, {
+            include: { association: 'materias' }
+        })
+
+        if(aluno){
+            for (const id of ids) {
+                const materia = await Materia.findByPk(id)
+
+                if (!materia) {
+                    return res.status(400).json({ Erro: "Materia não encontrada", id })
+                }
+
+                await aluno.removeMateria(materia)
+            }
+
+            return res.json('Materia(s) removida(s) com sucesso')
+        }
+
         return res.status(400).json({ Erro: 'Usuário não encontrado' })
     }
 }

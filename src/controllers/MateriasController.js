@@ -20,16 +20,17 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { id, nome, cor } = req.body
+        const { id } = req.params
+        const { nome, cor } = req.body
         const materia = await Materia.findByPk(id)
 
         if (materia) {
-            materia.nome = nome
-            materia.cor = cor
+            if (nome) materia.nome = nome
+            if (cor) materia.cor = cor
 
-            const novaMateria = await materia.save()
+            await materia.save()
 
-            res.status(200).json({ Materia: novaMateria })
+            res.status(200).json('Materia atualizada com sucesso')
 
         } else {
             res.status(400).json({ Erro: 'Matéria não encontrada' })

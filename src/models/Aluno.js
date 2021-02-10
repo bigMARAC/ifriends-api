@@ -14,6 +14,7 @@ class Aluno extends Model {
 
     static associate(models) {
         this.belongsToMany(models.Materia, { foreignKey: 'aluno_id', through: 'alunos_materias', as: 'materias' })
+        this.hasMany(models.Like, { foreignKey: 'origem_id', as: 'matches' })
     }
 }
 
