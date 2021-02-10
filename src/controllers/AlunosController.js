@@ -1,7 +1,8 @@
 const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { update } = require('../models/Aluno');
 
 module.exports = {
     async index(req, res) {
@@ -19,6 +20,23 @@ module.exports = {
 
     me(req, res) {
         res.status(200).json({ aluno: req.auth })
+    },
+
+    async update(req, res) {
+        const { id, nome, matricula } = req.body
+        const aluno = await Aluno.findByPk(id)
+
+        if(aluno){
+            aluno.nome = nome
+            aluno.matricula = matricula
+
+            const novoAluno = await aluno.save()
+
+            res.status(200).json({ Aluno: novoAluno })
+
+        } else {
+            res.status(400).json({ Erro: 'Usuário não encontrado' })
+        }
     },
 
     async store(req, res) {

@@ -1,3 +1,4 @@
+const { update } = require('../models/Aluno')
 const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
 
@@ -15,6 +16,23 @@ module.exports = {
             return res.status(200).send(materia)
         } else {
             return res.status(400).send('Campos Inválidos')
+        }
+    },
+
+    async update(req, res) {
+        const { id, nome, cor } = req.body
+        const materia = await Materia.findByPk(id)
+
+        if (materia) {
+            materia.nome = nome
+            materia.cor = cor
+
+            const novaMateria = await materia.save()
+
+            res.status(200).json({ Materia: novaMateria })
+
+        } else {
+            res.status(400).json({ Erro: 'Matéria não encontrada' })
         }
     },
 
