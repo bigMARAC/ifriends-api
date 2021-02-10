@@ -11,3 +11,5 @@ app.use(cors())
 app.use(routes)
 
 app.listen(777)
+
+console.log('🚀 Servidor rodando na porta 777')

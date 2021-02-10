@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const Aluno = require('./../models/Aluno')
+const { secret } = require('./../config/token')
 
 module.exports = {
     async check(req, res, next) {
@@ -7,7 +8,7 @@ module.exports = {
             const [, token] = req.headers.authorization.split(' ')
 
             try {
-                const user = jwt.verify(token, 'got a secret?')
+                const user = jwt.verify(token, secret)
                 const aluno = await Aluno.findByPk(user.user)
 
                 req.auth = aluno

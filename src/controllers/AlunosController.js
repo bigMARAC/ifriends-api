@@ -1,8 +1,8 @@
 const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { update } = require('../models/Aluno');
+const jwt = require('jsonwebtoken')
+const { secret } = require('./../config/token')
 
 module.exports = {
     async index(req, res) {
@@ -56,7 +56,7 @@ module.exports = {
                     
                     const token = jwt.sign(
                         {user: aluno.id},
-                        'got a secret?',
+                        secret,
                         { expiresIn: 86400 } // 24 horas
                     )
 
@@ -82,7 +82,7 @@ module.exports = {
         if(aluno){
             const token = jwt.sign(
                 {user: aluno.id},
-                'got a secret?',
+                secret,
                 { expiresIn: 86400 } // 24 horas
             )
 

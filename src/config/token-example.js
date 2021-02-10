@@ -1,0 +1,1 @@
+module.exports = { secret: ' ' } // sua chave de segurança para o jwt
