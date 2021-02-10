@@ -30,7 +30,8 @@ Não esqueça de criar um arquivo `token.js` em `src/config/` seguindo o exemplo
 
 - [x] CRUD de Alunos
 - [x] CRUD de Matérias
-- [x] Vincular Matérias aos Alunos
+- [X] Match Flux
+- [x] Adicionar/Remover Matérias dos Alunos
 - [x] JSON Web Token
 - [ ] Chat
 
