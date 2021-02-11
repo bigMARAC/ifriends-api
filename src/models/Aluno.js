@@ -5,7 +5,8 @@ class Aluno extends Model {
         super.init({
             matricula: DataTypes.STRING,
             nome: DataTypes.STRING,
-            senha: DataTypes.STRING
+            senha: DataTypes.STRING,
+            token: DataTypes.STRING
         }, {
             sequelize,
             tableName: 'alunos'

@@ -7,22 +7,31 @@ module.exports = {
         if (req.headers.authorization) {
             const [, token] = req.headers.authorization.split(' ')
 
-            try {
-                const user = jwt.verify(token, secret)
-                const aluno = await Aluno.findByPk(user.user, {
-                    include: { association: 'materias' }
-                })
+            const a = await Aluno.findOne({
+                where: { token }
+            })
 
-                req.auth = aluno
+            if (a) {
+                try {
+                    const user = jwt.verify(token, secret)
+                    const aluno = await Aluno.findByPk(user.user, {
+                        include: { association: 'materias' }
+                    })
 
-                if (aluno) {
-                    next()
-                } else {
-                    res.status(401)
+                    if (aluno && aluno.id == a.id) {
+                        req.auth = aluno
+                        next()
+                    } else {
+                        res.status(401)
+                    }
+                } catch (error) {
+                    res.status(401).json({ Erro: error })
                 }
-            } catch (error) {
-                res.status(401).json({ Erro: error })
+            } else {
+                res.status(401).json({ Erro: 'Usuário não autenticado' })
             }
+
+
         } else {
             res.status(401).json({ Erro: 'Usuário não autenticado' })
         }

@@ -7,8 +7,8 @@ const Auth = require('./middlewares/Auth')
 const routes = express.Router()
 
 // alunos - rotas abertas
-routes.post('/login', AlunosController.auth) // autenticar um aluno
 routes.post('/alunos', AlunosController.store) // criar um aluno
+routes.post('/login', AlunosController.auth) // autenticar um aluno
 
 // alunos - rotas autenticadas
 routes.get('/me', Auth.check, AlunosController.me) // exibir o aluno que está autenticado

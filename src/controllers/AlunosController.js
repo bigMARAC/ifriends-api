@@ -7,6 +7,7 @@ const { secret } = require('./../config/token');
 module.exports = {
     async index(req, res) {
         const alunos = await Aluno.findAll({
+            attributes: [ 'matricula', 'nome' ],
             include: {
                 association: 'materias',
                 through: {
@@ -61,7 +62,10 @@ module.exports = {
                         { expiresIn: 86400 } // 24 horas
                     )
 
-                    return res.status(200).json({ aluno, token })
+                    aluno.token = token
+                    await aluno.save()
+
+                    return res.status(200).json({ aluno })
 
                 } else {
                     return res.status(400).json({ Erro: err })
@@ -87,9 +91,12 @@ module.exports = {
                 { expiresIn: 86400 } // 24 horas
             )
 
+            aluno.token = token
+            await aluno.save()
+
             bcrypt.compare(senha, aluno.senha, function (err, result) {
                 if (result) {
-                    return res.status(200).json({ auth: true, nome: aluno.nome, token })
+                    return res.status(200).json({ auth: true, nome: aluno.nome, token: aluno.token })
                 }
                 return res.status(401).json({ auth: 'Senha incorreta' })
             });
