@@ -13,15 +13,16 @@ routes.post('/login', AlunosController.auth) // autenticar um aluno
 // alunos - rotas autenticadas
 routes.get('/me', Auth.check, AlunosController.me) // exibir o aluno que está autenticado
 routes.get('/alunos', Auth.check, AlunosController.index) // listar alunos
-routes.put('/alunos/:id', Auth.check, AlunosController.update) // atualizar um aluno
+routes.put('/alunos', Auth.check, AlunosController.update) // atualizar um aluno
 routes.delete('/alunos/:id', Auth.check, AlunosController.destroy) // apagar um aluno
 
 routes.post('/alunos/materias/:aluno_id', Auth.check, AlunosController.add) // vincular materias a um aluno
 routes.delete('/alunos/materias/:aluno_id', Auth.check, AlunosController.delete)
 
+routes.get('/materias', MateriasController.index) // listar materias
+
 // materias - rotas autenticadas
 routes.post('/materias', Auth.check, MateriasController.store) // criar materia
-routes.get('/materias', Auth.check, MateriasController.index) // listar materias
 routes.put('/materias/:id', Auth.check, MateriasController.update) // atualizar uma materia
 routes.delete('/materias/:id', Auth.check, MateriasController.destroy) // apagar uma materia
 

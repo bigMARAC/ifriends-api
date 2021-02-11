@@ -13,7 +13,7 @@ module.exports = {
             return res.json(aluno.matches)
         }
 
-        return res.status(400).json({ Erro: 'Usuário não encontrado' })
+        return res.status(400).json({ erro: 'Usuário não encontrado' })
 
     },
 
@@ -40,7 +40,7 @@ module.exports = {
                 return res.status(200).json({ like })
             }
         } else {
-            return res.status(401).json({ Erro: 'ID de usuário inválido' })
+            return res.status(401).json({ erro: 'ID de usuário inválido' })
         }
     },
 
@@ -57,6 +57,6 @@ module.exports = {
             return res.status(200).json('Match cancelado com sucesso')
         }
 
-        return res.status(400).json({ Erro: 'Match inexistente' })
+        return res.status(400).json({ erro: 'Match inexistente' })
     }
 }

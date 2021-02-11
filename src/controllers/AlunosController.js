@@ -7,7 +7,7 @@ const { secret } = require('./../config/token');
 module.exports = {
     async index(req, res) {
         const alunos = await Aluno.findAll({
-            attributes: [ 'matricula', 'nome' ],
+            attributes: [ 'matricula', 'nome', 'id' ],
             include: {
                 association: 'materias',
                 through: {
@@ -19,13 +19,17 @@ module.exports = {
         return res.status(200).json({ alunos })
     },
 
-    me(req, res) {
-        res.status(200).json({ aluno: req.auth })
+    async me(req, res) {
+        const [, token] = req.headers.authorization.split(' ')
+        const aluno = await Aluno.findOne({
+            where: { token },
+            include: { association: 'materias' }
+        })
+        res.status(200).json({ aluno })
     },
 
     async update(req, res) {
-        const { id } = req.params
-        const { nome, matricula } = req.body
+        const { id, nome, matricula } = req.body
         const aluno = await Aluno.findByPk(id)
 
         if (aluno) {
@@ -34,10 +38,10 @@ module.exports = {
 
             await aluno.save()
 
-            res.status(200).json('Aluno atualizado com sucesso')
+            res.status(200).json(aluno)
 
         } else {
-            res.status(400).json({ Erro: 'Usuário não encontrado' })
+            res.status(400).json({ erro: 'Usuário não encontrado' })
         }
     },
 
@@ -50,7 +54,7 @@ module.exports = {
                     for (const id of ids) {
                         const materia = await Materia.findByPk(id)
                         if (!materia) {
-                            return res.status(400).json({ Erro: "Materia não encontrada", id })
+                            return res.status(400).json({ erro: "Materia não encontrada", id })
                         }
 
                         await aluno.addMateria(materia)
@@ -68,7 +72,7 @@ module.exports = {
                     return res.status(200).json({ aluno })
 
                 } else {
-                    return res.status(400).json({ Erro: err })
+                    return res.status(400).json({ erro: err })
                 }
             })
         } else {
@@ -98,7 +102,7 @@ module.exports = {
                 if (result) {
                     return res.status(200).json({ auth: true, nome: aluno.nome, token: aluno.token })
                 }
-                return res.status(401).json({ auth: 'Senha incorreta' })
+                return res.status(401).json({ erro: 'Senha incorreta' })
             });
         } else {
             return res.status(400).json('Usuário não encontrado')
@@ -117,14 +121,14 @@ module.exports = {
                 const materia = await Materia.findByPk(id)
 
                 if (!materia) {
-                    return res.status(400).json({ Erro: "Materia não encontrada", id })
+                    return res.status(400).json({ erro: "Materia não encontrada", id })
                 }
 
                 await aluno.addMateria(materia)
             }
             return res.json('Materia(s) adicionada(s) com sucesso')
         }
-        return res.status(400).json({ Erro: "Campos inválidos" })
+        return res.status(400).json({ erro: "Campos inválidos" })
     },
 
     async destroy(req, res) {
@@ -134,23 +138,21 @@ module.exports = {
             await aluno.destroy()
             return res.json('Usuário deletado com sucesso')
         }
-        return res.status(400).json({ Erro: 'Usuário não encontrado' })
+        return res.status(400).json({ erro: 'Usuário não encontrado' })
     },
 
     async delete(req, res){
         const { aluno_id } = req.params
         const { ids } = req.body
 
-        const aluno = await Aluno.findByPk(aluno_id, {
-            include: { association: 'materias' }
-        })
+        const aluno = await Aluno.findByPk(aluno_id)
 
         if(aluno){
             for (const id of ids) {
                 const materia = await Materia.findByPk(id)
 
                 if (!materia) {
-                    return res.status(400).json({ Erro: "Materia não encontrada", id })
+                    return res.status(400).json({ erro: "Materia não encontrada", id })
                 }
 
                 await aluno.removeMateria(materia)
@@ -159,6 +161,6 @@ module.exports = {
             return res.json('Materia(s) removida(s) com sucesso')
         }
 
-        return res.status(400).json({ Erro: 'Usuário não encontrado' })
+        return res.status(400).json({ erro: 'Usuário não encontrado' })
     }
 }

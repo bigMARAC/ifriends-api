@@ -33,7 +33,7 @@ module.exports = {
             res.status(200).json('Materia atualizada com sucesso')
 
         } else {
-            res.status(400).json({ Erro: 'Matéria não encontrada' })
+            res.status(400).json({ erro: 'Matéria não encontrada' })
         }
     },
 
@@ -44,6 +44,6 @@ module.exports = {
             await materia.destroy()
             return res.json('Matéria deletada com sucesso')
         }
-        return res.status(400).json({ Erro: 'Matéria não encontrada' })
+        return res.status(400).json({ erro: 'Matéria não encontrada' })
     },
 }
