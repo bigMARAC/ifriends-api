@@ -20,6 +20,7 @@ Para criar as Migrates use:
 npx sequelize db:migrate
 ```
 Não esqueça de criar um arquivo `db.js` em `src/config/` seguindo o exemplo de `db-example.js`
+
 Não esqueça de criar um arquivo `token.js` em `src/config/` seguindo o exemplo de `token-example.js`
 
 ## Requisitos
