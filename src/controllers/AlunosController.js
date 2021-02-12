@@ -7,7 +7,7 @@ const { secret } = require('./../config/token');
 module.exports = {
     async index(req, res) {
         const alunos = await Aluno.findAll({
-            attributes: [ 'matricula', 'nome', 'id' ],
+            attributes: ['matricula', 'nome', 'id'],
             include: {
                 association: 'materias',
                 through: {
@@ -29,19 +29,52 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { id, nome, matricula } = req.body
-        const aluno = await Aluno.findByPk(id)
+        const { aluno_id, nome, matricula, ids } = req.body
+        const before = []
+        const aluno = await Aluno.findByPk(aluno_id, {
+            include: { association: 'materias' }
+        })
 
         if (aluno) {
             if (nome) aluno.nome = nome
             if (matricula) aluno.matricula = matricula
 
             await aluno.save()
-
-            res.status(200).json(aluno)
-
         } else {
             res.status(400).json({ erro: 'Usuário não encontrado' })
+        }
+
+        for (const materia of aluno.materias) {
+            before.push(materia.id)
+        }
+
+        if (aluno && ids) {
+            for (const id of ids) {
+                const materia = await Materia.findByPk(id)
+
+                if (!materia) {
+                    return res.status(400).json({ erro: "Materia não encontrada", id })
+                }
+
+                await aluno.addMateria(materia)
+
+                for (b of before) {
+                    if (b == id) {
+                        await aluno.removeMateria(materia)
+                    }
+                }
+            }
+            const novoAluno = await Aluno.findByPk(aluno_id, {
+                include: {
+                    association: 'materias',
+                    through: {
+                        attributes: []
+                    }
+                }
+            })
+            return res.json({ novoAluno })
+        } else {
+            return res.status(400).json({ aluno })
         }
     },
 
@@ -111,26 +144,6 @@ module.exports = {
 
     },
 
-    async add(req, res) {
-        const { aluno_id } = req.params
-        const { ids } = req.body
-        const aluno = await Aluno.findByPk(aluno_id)
-
-        if (aluno) {
-            for (const id of ids) {
-                const materia = await Materia.findByPk(id)
-
-                if (!materia) {
-                    return res.status(400).json({ erro: "Materia não encontrada", id })
-                }
-
-                await aluno.addMateria(materia)
-            }
-            return res.json('Materia(s) adicionada(s) com sucesso')
-        }
-        return res.status(400).json({ erro: "Campos inválidos" })
-    },
-
     async destroy(req, res) {
         const { id } = req.params
         const aluno = await Aluno.findByPk(id)
@@ -139,28 +152,39 @@ module.exports = {
             return res.json('Usuário deletado com sucesso')
         }
         return res.status(400).json({ erro: 'Usuário não encontrado' })
-    },
-
-    async delete(req, res){
-        const { aluno_id } = req.params
-        const { ids } = req.body
-
-        const aluno = await Aluno.findByPk(aluno_id)
-
-        if(aluno){
-            for (const id of ids) {
-                const materia = await Materia.findByPk(id)
-
-                if (!materia) {
-                    return res.status(400).json({ erro: "Materia não encontrada", id })
-                }
-
-                await aluno.removeMateria(materia)
-            }
-
-            return res.json('Materia(s) removida(s) com sucesso')
-        }
-
-        return res.status(400).json({ erro: 'Usuário não encontrado' })
     }
+
+    // async addOrDelete(req, res) {
+    //     const { aluno_id, ids } = req.body
+    //     const before = []
+    //     const aluno = await Aluno.findByPk(aluno_id, {
+    //         include: { association: 'materias' }
+    //     })
+
+
+    //     for (const materia of aluno.materias) {
+    //         before.push(materia.id)
+    //     }
+
+    //     if (aluno) {
+    //         for (const id of ids) {
+    //             const materia = await Materia.findByPk(id)
+
+    //             if (!materia) {
+    //                 return res.status(400).json({ erro: "Materia não encontrada", id })
+    //             }
+
+    //             await aluno.addMateria(materia)
+
+    //             for (b of before) {
+    //                 if (b == id) {
+    //                     await aluno.removeMateria(materia)
+    //                 }
+    //             }
+
+    //         }
+    //         return res.json('Materia(s) alteradas(s) com sucesso')
+    //     }
+    //     return res.status(400).json({ erro: "Campos inválidos" })
+    // },
 }
