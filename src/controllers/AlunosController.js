@@ -153,38 +153,4 @@ module.exports = {
         }
         return res.status(400).json({ erro: 'Usuário não encontrado' })
     }
-
-    // async addOrDelete(req, res) {
-    //     const { aluno_id, ids } = req.body
-    //     const before = []
-    //     const aluno = await Aluno.findByPk(aluno_id, {
-    //         include: { association: 'materias' }
-    //     })
-
-
-    //     for (const materia of aluno.materias) {
-    //         before.push(materia.id)
-    //     }
-
-    //     if (aluno) {
-    //         for (const id of ids) {
-    //             const materia = await Materia.findByPk(id)
-
-    //             if (!materia) {
-    //                 return res.status(400).json({ erro: "Materia não encontrada", id })
-    //             }
-
-    //             await aluno.addMateria(materia)
-
-    //             for (b of before) {
-    //                 if (b == id) {
-    //                     await aluno.removeMateria(materia)
-    //                 }
-    //             }
-
-    //         }
-    //         return res.json('Materia(s) alteradas(s) com sucesso')
-    //     }
-    //     return res.status(400).json({ erro: "Campos inválidos" })
-    // },
 }

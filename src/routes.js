@@ -16,8 +16,7 @@ routes.get('/alunos', Auth.check, AlunosController.index) // listar alunos
 routes.put('/alunos', Auth.check, AlunosController.update) // atualizar um aluno
 routes.delete('/alunos/:id', Auth.check, AlunosController.destroy) // apagar um aluno
 
-// routes.post('/alunos/materias/', Auth.check, AlunosController.addOrDelete) // atualizar materias de um aluno
-
+// materias - rotas abertas
 routes.get('/materias', MateriasController.index) // listar materias
 
 // materias - rotas autenticadas
