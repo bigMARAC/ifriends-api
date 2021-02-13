@@ -20,6 +20,7 @@
     "sequelize-cli": "^6.2.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "nodemon": "^2.0.7",
+    "readmeio": "^4.0.2"
   }
 }

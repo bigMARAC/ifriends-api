@@ -18,8 +18,7 @@ module.exports = {
     },
 
     async store(req, res) {
-        const { origem_id } = req.params
-        const { destino_id } = req.body
+        const { origem_id, destino_id } = req.body
 
         const origem = await Aluno.findByPk(origem_id)
         const destino = await Aluno.findByPk(destino_id)
@@ -33,11 +32,11 @@ module.exports = {
             if (matchs) {
                 for (match of matchs) {
                     if (match.destino_id == origem_id && match.origem_id == destino_id) {
-                        return res.json('Its a Match!')
+                        return res.json({ match: true })
                     }
                 }
                 const like = await Like.create({ origem_id: origem_id, destino_id })
-                return res.status(200).json({ like })
+                return res.status(200).json({ match: false, like })
             }
         } else {
             return res.status(401).json({ erro: 'ID de usuário inválido' })
