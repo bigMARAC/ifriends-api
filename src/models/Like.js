@@ -2,7 +2,9 @@ const { Model, DataTypes } = require('sequelize')
 
 class Like extends Model {
     static init(sequelize) {
-        super.init({}, {
+        super.init({
+            match: DataTypes.BOOLEAN
+        }, {
             sequelize,
             tableName: 'likes'
         })
