@@ -30,12 +30,12 @@ module.exports = {
             })
 
             if (matchs) {
+                const like = await Like.create({ origem_id: origem_id, destino_id })
                 for (match of matchs) {
                     if (match.destino_id == origem_id && match.origem_id == destino_id) {
                         return res.json({ match: true })
                     }
                 }
-                const like = await Like.create({ origem_id: origem_id, destino_id })
                 return res.status(200).json({ match: false, like })
             }
         } else {
@@ -43,7 +43,7 @@ module.exports = {
         }
     },
 
-    async delete(req, res){
+    async delete(req, res) {
         const { origem_id } = req.params
         const { destino_id } = req.body
 
@@ -51,7 +51,7 @@ module.exports = {
             where: { origem_id, destino_id }
         })
 
-        if(match) {
+        if (match) {
             await match.destroy()
             return res.status(200).json('Match cancelado com sucesso')
         }

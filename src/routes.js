@@ -25,8 +25,8 @@ routes.put('/materias/:id', Auth.check, MateriasController.update) // atualizar 
 routes.delete('/materias/:id', Auth.check, MateriasController.destroy) // apagar uma materia
 
 // match
-routes.post('/match', Auth.check,LikesController.store) // dar like em outro aluno
-routes.get('/match/:aluno_id', Auth.check,LikesController.index) // listar os matches de um aluno
-routes.delete('/match/:origem_id', Auth.check,LikesController.delete) // cancelar um match
+routes.post('/match', Auth.check, LikesController.store) // dar like em outro aluno
+routes.get('/match/:aluno_id', Auth.check, LikesController.index) // listar os matches de um aluno
+routes.delete('/match/:origem_id', Auth.check, LikesController.delete) // cancelar um match
 
 module.exports = routes

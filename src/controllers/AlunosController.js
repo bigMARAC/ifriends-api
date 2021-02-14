@@ -3,29 +3,165 @@ const Materia = require('../models/Materia')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const { secret } = require('./../config/token');
+const { Op } = require("sequelize");
+const Sequelize = require("sequelize")
 
 module.exports = {
-    async index(req, res) {
-        const alunos = await Aluno.findAll({
-            attributes: ['matricula', 'nome', 'id'],
-            include: {
-                association: 'materias',
-                through: {
-                    attributes: []
+    async store(req, res) {
+        const {
+            desc,
+            phone,
+            instagram,
+            matricula,
+            turma,
+            nome,
+            senha,
+            ids
+        } = req.body
+
+        if (instagram && phone && desc && turma && nome && matricula && senha) {
+            bcrypt.hash(senha, 10, async function (err, hash) {
+                if (!err) {
+                    const teste = await Aluno.findOne({
+                        where: { matricula }
+                    })
+                    if (!teste) {
+                        try {
+                            const aluno = await Aluno.create({
+                                desc,
+                                phone,
+                                instagram,
+                                matricula,
+                                turma,
+                                nome,
+                                senha: hash
+                            })
+                            for (const id of ids) {
+                                const materia = await Materia.findByPk(id)
+                                if (!materia) {
+                                    return res.status(400).json({ erro: "Materia não encontrada", id })
+                                }
+                                await aluno.addMateria(materia)
+                            }
+
+                            const token = jwt.sign(
+                                { user: aluno.id },
+                                secret,
+                                { expiresIn: 7200 } // 2 horas
+                            )
+
+                            aluno.token = token
+                            await aluno.save()
+
+                            return res.status(200).json({ aluno })
+
+                        } catch (error) {
+                            return res.status(400).json({ erro: error })
+                        }
+                    } else {
+                        return res.status(400).json({ erro: "Matrícula em uso" })
+                    }
+                } else {
+                    return res.status(400).json({ erro: err })
                 }
+            })
+        } else {
+            return res.status(400).json({ erro: "Campos inválidos" })
+        }
+    },
+
+    async auth(req, res) {
+        const { matricula, senha } = req.body
+        const aluno = await Aluno.findOne({
+            where: {
+                matricula
             }
         })
 
-        return res.status(200).json({ alunos })
+        if (matricula && senha) {
+            if (aluno) {
+                const token = jwt.sign(
+                    { user: aluno.id },
+                    secret,
+                    { expiresIn: 7200 } // 2 horas
+                )
+                aluno.token = token
+                await aluno.save()
+
+                bcrypt.compare(senha, aluno.senha, function (err, result) {
+                    if (err) {
+                        return res.status(400).json({ erro: err })
+                    }
+
+                    if (result) {
+                        return res.status(200).json({ auth: true, nome: aluno.nome, token: aluno.token })
+                    }
+                    return res.status(401).json({ erro: 'Senha incorreta' })
+                });
+            } else {
+                return res.status(400).json('Usuário não encontrado')
+            }
+        } else {
+            res.status(400).json({ erro: "Campos inválidos" })
+        }
     },
 
     async me(req, res) {
         const [, token] = req.headers.authorization.split(' ')
-        const aluno = await Aluno.findOne({
-            where: { token },
-            include: { association: 'materias' }
-        })
-        res.status(200).json({ aluno })
+
+        if (token) {
+            const aluno = await Aluno.findOne({
+                where: { token },
+                include: { association: 'materias' }
+            })
+            if (aluno) {
+                return res.status(200).json({ aluno })
+            }
+            return res.status(400).json({ erro: "Usuário não encontrado" })
+        }
+        return res.status(400).json({ erro: "Baerer Token inválido" })
+    },
+
+    async index(req, res) {
+        const ids = []
+        const [, token] = req.headers.authorization.split(' ')
+
+        if (token) {
+            try {
+                const aluno = await Aluno.findOne({
+                    where: { token },
+                    include: { association: 'matches' }
+                })
+
+                for (match of aluno.matches) {
+                    ids.push(match.destino_id)
+                }
+
+                const alunos = await Aluno.findAll({
+                    order: Sequelize.literal('rand()'),
+                    where: {
+                        id: {
+                            [Op.notIn]: ids,
+                        },
+                        token: {
+                            [Op.ne]: token
+                        }
+                    },
+                    attributes: ['desc', 'phone', 'instagram', 'matricula', 'turma', 'nome','id'],
+                    include: {
+                        association: 'materias',
+                        through: {
+                            attributes: []
+                        }
+                    }
+                })
+                return res.status(200).json({ alunos })
+            } catch (error) {
+                // return res.status(400).json({ erro: error })
+                console.log(error)
+            }
+        }
+        return res.status(400).json({ erro: "Bearer Token inválido" })
     },
 
     async update(req, res) {
@@ -76,72 +212,6 @@ module.exports = {
         } else {
             return res.status(400).json({ aluno })
         }
-    },
-
-    async store(req, res) {
-        const { nome, matricula, senha, ids } = req.body
-        if (nome && matricula && senha) {
-            bcrypt.hash(senha, 10, async function (err, hash) {
-                if (!err) {
-                    const aluno = await Aluno.create({ nome, matricula, senha: hash })
-                    for (const id of ids) {
-                        const materia = await Materia.findByPk(id)
-                        if (!materia) {
-                            return res.status(400).json({ erro: "Materia não encontrada", id })
-                        }
-
-                        await aluno.addMateria(materia)
-                    }
-
-                    const token = jwt.sign(
-                        { user: aluno.id },
-                        secret,
-                        { expiresIn: 86400 } // 24 horas
-                    )
-
-                    aluno.token = token
-                    await aluno.save()
-
-                    return res.status(200).json({ aluno })
-
-                } else {
-                    return res.status(400).json({ erro: err })
-                }
-            })
-        } else {
-            return res.status(400).send('Campos Inválidos')
-        }
-    },
-
-    async auth(req, res) {
-        const { matricula, senha } = req.body
-        const aluno = await Aluno.findOne({
-            where: {
-                matricula
-            }
-        })
-
-        if (aluno) {
-            const token = jwt.sign(
-                { user: aluno.id },
-                secret,
-                { expiresIn: 86400 } // 24 horas
-            )
-
-            aluno.token = token
-            await aluno.save()
-
-            bcrypt.compare(senha, aluno.senha, function (err, result) {
-                if (result) {
-                    return res.status(200).json({ auth: true, nome: aluno.nome, token: aluno.token })
-                }
-                return res.status(401).json({ erro: 'Senha incorreta' })
-            });
-        } else {
-            return res.status(400).json('Usuário não encontrado')
-        }
-
-
     },
 
     async destroy(req, res) {
