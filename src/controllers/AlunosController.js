@@ -147,7 +147,7 @@ module.exports = {
                             [Op.ne]: token
                         }
                     },
-                    attributes: ['desc', 'phone', 'instagram', 'matricula', 'turma', 'nome','id'],
+                    attributes: ['desc', 'phone', 'instagram', 'matricula', 'turma', 'nome', 'id', 'foto'],
                     include: {
                         association: 'materias',
                         through: {
@@ -164,7 +164,7 @@ module.exports = {
     },
 
     async update(req, res) {
-        const { aluno_id, nome, matricula, ids } = req.body
+        const { aluno_id, nome, desc, matricula, ids } = req.body
         const before = []
         const aluno = await Aluno.findByPk(aluno_id, {
             include: { association: 'materias' }
@@ -173,6 +173,7 @@ module.exports = {
         if (aluno) {
             if (nome) aluno.nome = nome
             if (matricula) aluno.matricula = matricula
+            if (desc) aluno.desc = desc
 
             await aluno.save()
         } else {
@@ -207,7 +208,7 @@ module.exports = {
                     }
                 }
             })
-            return res.json({ novoAluno })
+            return res.json({ aluno: novoAluno })
         } else {
             return res.status(400).json({ aluno })
         }
@@ -218,8 +219,24 @@ module.exports = {
         const aluno = await Aluno.findByPk(id)
         if (aluno) {
             await aluno.destroy()
-            return res.json('Usuário deletado com sucesso')
+            return res.stauts(200).json("Usuário deletado com sucesso")
         }
         return res.status(400).json({ erro: 'Usuário não encontrado' })
+    },
+
+    async photo(req, res) {
+        const foto = req.file.filename
+        const [, token] = req.headers.authorization.split(' ')
+
+        if (foto) {
+            const aluno = await Aluno.findOne({
+                where: { token }
+            })
+            aluno.foto = foto
+            await aluno.save()
+            return res.status(200).json({ success: "Foto salva com sucesso" })
+        } else {
+            return res.status(400).json({ erro: 'Foto inválida' })
+        }
     }
 }
