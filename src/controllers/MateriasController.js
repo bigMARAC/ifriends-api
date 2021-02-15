@@ -1,21 +1,24 @@
 const { update } = require('../models/Aluno')
 const Aluno = require('../models/Aluno')
 const Materia = require('../models/Materia')
+const sequelize = require('sequelize')
 
 module.exports = {
     async index(req, res) {
-        const materias = await Materia.findAll()
+        const materias = await Materia.findAll({
+            order: ['nome']
+        })
 
         return res.status(200).json({ materias })
     },
 
     async store(req, res) {
         const { nome, cor } = req.body
-        if (nome && cor) {
+        if (nome) {
             const materia = await Materia.create({ cor, nome })
             return res.status(200).send(materia)
         } else {
-            return res.status(400).send('Campos Inválidos')
+            return res.status(400).send({ erro: 'Campos inválidos' })
         }
     },
 
