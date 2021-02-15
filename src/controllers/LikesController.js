@@ -16,7 +16,7 @@ module.exports = {
         if (aluno) {
             for(const match of aluno.matches){
                 const novo = await Aluno.findByPk(match.destino_id, {
-                    attributes: [ 'id', 'nome', 'turma', 'phone', 'instagram', 'desc']
+                    attributes: [ 'id', 'nome', 'turma', 'phone', 'instagram', 'desc', 'foto']
                 })
                 data.push(novo)
             }
