@@ -19,6 +19,8 @@ module.exports = {
             ids
         } = req.body
 
+        const foto = 'default.png'
+
         if (instagram && phone && desc && turma && nome && matricula && senha) {
             bcrypt.hash(senha, 10, async function (err, hash) {
                 if (!err) {
@@ -27,6 +29,12 @@ module.exports = {
                     })
                     if (!teste) {
                         try {
+                            for (const id of ids) {
+                                const materia = await Materia.findByPk(id)
+                                if (!materia) {
+                                    return res.status(400).json({ erro: "Materia não encontrada", id })
+                                }
+                            }
                             const aluno = await Aluno.create({
                                 desc,
                                 phone,
@@ -34,13 +42,11 @@ module.exports = {
                                 matricula,
                                 turma,
                                 nome,
+                                foto,
                                 senha: hash
                             })
                             for (const id of ids) {
                                 const materia = await Materia.findByPk(id)
-                                if (!materia) {
-                                    return res.status(400).json({ erro: "Materia não encontrada", id })
-                                }
                                 await aluno.addMateria(materia)
                             }
 
@@ -234,7 +240,7 @@ module.exports = {
             })
             aluno.foto = foto
             await aluno.save()
-            return res.status(200).json({ success: "Foto salva com sucesso" })
+            return res.status(200).json({ aluno })
         } else {
             return res.status(400).json({ erro: 'Foto inválida' })
         }
