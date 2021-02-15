@@ -10,7 +10,8 @@ class Aluno extends Model {
             turma: DataTypes.STRING,
             nome: DataTypes.STRING,
             senha: DataTypes.STRING,
-            token: DataTypes.STRING
+            token: DataTypes.STRING,
+            foto: DataTypes.STRING
         }, {
             sequelize,
             tableName: 'alunos'
