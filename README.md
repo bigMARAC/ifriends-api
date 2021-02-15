@@ -11,17 +11,23 @@ npm install
 ```
 
 ## Configurações
-Para criar o Banco use:
+Para criar o Banco, use:
 ```bash
 npx sequelize db:create
 ```
-Para criar as Migrates use:
+Para criar as Migrates, use:
 ```bash
 npx sequelize db:migrate
 ```
 Não esqueça de criar um arquivo `db.js` em `src/config/` seguindo o exemplo de `db-example.js`
 
 Não esqueça de criar um arquivo `token.js` em `src/config/` seguindo o exemplo de `token-example.js`
+
+## Inicialização
+Para inicializar o projeto, use:
+```bash
+npm run serve
+```
 
 ## Requisitos
 - [Node](https://nodejs.org/en/download/)
