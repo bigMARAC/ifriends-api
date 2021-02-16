@@ -1,3 +1,4 @@
 node_modules
 src/config/db.js
 src/config/token.js
+src/tmp/uploads/

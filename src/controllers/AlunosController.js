@@ -4,7 +4,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken')
 const { secret } = require('./../config/token');
 const { Op } = require("sequelize");
-const Sequelize = require("sequelize")
+const Sequelize = require("sequelize");
+const { findByPk } = require('../models/Aluno');
 
 module.exports = {
     async store(req, res) {
@@ -231,18 +232,16 @@ module.exports = {
     },
 
     async photo(req, res) {
-        const foto = req.file.filename
         const [, token] = req.headers.authorization.split(' ')
-
-        if (foto) {
-            const aluno = await Aluno.findOne({
-                where: { token }
-            })
-            aluno.foto = foto
+        const aluno = await Aluno.findOne({
+            where: { token }
+        })
+        if (req.file.filename) {
+            aluno.foto = req.file.filename
             await aluno.save()
             return res.status(200).json({ aluno })
         } else {
-            return res.status(400).json({ erro: 'Foto inválida' })
+            return res.status(200).json({ aluno })
         }
     }
 }
