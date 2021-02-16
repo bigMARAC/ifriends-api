@@ -2,6 +2,10 @@
 ![Badge](https://img.shields.io/badge/MaracTech-IFriends-blueviolet)
 ![Badge](https://img.shields.io/badge/license-MIT-brightgreen)
 
+## Aplicação principal
+
+### [IFriends](https://github.com/bigMARAC/IFriends)
+
 ## Instalação
 
 Na raiz use, isso irá instalar todas as dependencias que estão no `package.json`:
