@@ -44,9 +44,10 @@ npm run serve
 - [x] JSON Web Token
 
 ### To-Do
-- [ ] Atualizar Foto de Perfil
-- [ ] Atualizar Senha
+- [ ] Atualizar foto de perfil
+- [ ] Atualizar senha
 - [ ] Chat
+- [ ] Exibir uma cor diferente pra cada matéria
 
 ## Autor
 
